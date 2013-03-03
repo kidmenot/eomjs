@@ -1,13 +1,31 @@
-
+body {
+	width: 940px;
+	margin: 0 auto;
+	font: 10pt/1.5em Helvetica,"Helvetica neue", Arial, sans-serif;
+}
 
 #map {
-	height: 180px;
+	height: 400px;
 	width: 700px;
-	position: relative;
 }
 
 #scale {
 	height: 50px;
 	width: 700px;
-	position: relative;
+}
+
+#controls ul {
+	display: inline-block;
+	width:700px;
+	text-decoration: none;
+}
+
+#controls ul li {
+	display: inline-block;
+   	margin:0 auto;
+}
+
+.time-scale {
+	height: 50px;
+	width: 700px;
 }

@@ -1,26 +1,22 @@
 define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function ($) {
 
+	var eventCount = 0;
+
 	/*set of methods available*/
     var methods = {
 
     	init: function(options) {
     		var mapDiv = options.mapDiv || 'map';
     		var scaleDiv = options.scaleDiv|| 'scale';
-    		$('#' + mapDiv).eom(mapDiv,options.mapOptions||{});
-    		$('#' + scaleDiv).eom(scaleDiv,options.scaleOptions||{});
+    		$('#' + mapDiv).eom(options.mapOptions||{});
+    		$('#' + scaleDiv).eom(options.scaleOptions||{});
     		return this;
     	},
+
     	map: function(options) {
 
     		var div = this[0].id;
-    		/*
-    		var map = new OpenLayers.Map(div, {numZoomLevels: 2});
-            var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS", "http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
-            
-            map.addLayer(layer);
-            map.zoomToMaxExtent();
-			*/
-
+    		
 			// create a map in the "map" div, set the view to a given place and zoom
 			var map = L.map('map').setView([51.505, -0.09], 13);
 
@@ -29,26 +25,66 @@ define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function 
     			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 			}).addTo(map);
 
+			/*
 			// add a marker in the given location, attach some popup content to it and open the popup
 			L.marker([51.5, -0.09]).addTo(map)
     			.bindPopup('A pretty CSS3 popup. <br> Easily customizable.')
     			.openPopup();
-
-            console.log(this);
+			*/
+			console.log(this);
    			return this;
    		},
+
    		scale: function(options) {
    			
    			var max = options.max || 1000;
    			var min = options.min || 0;
-   			var step = options.step || 10;
+   			var step = eventCount;
 
 
-   			$(this).append($('<input />',{ type:"range", min:min, max:max, step: step }));
+   			$(this).append($('<input />',{ class:'time-scale', type:"range", min:min, max:max, step: step }));
 
    			console.log(this);
    			return this;
+   		},
+   		
+   		add: function(options) {
+
+   			if( Object.prototype.toString.call(newEvents) !== '[object Array]' ) {
+   				$.error( 'Method add requires an array parameter' );	
+   			}
+
+   			var mapDiv = options.mapDiv || 'map';
+    		var scaleDiv = options.scaleDiv|| 'scale';
+    		
+   			/*
+				title, description, time, lat, lng
+   			*/
+   			$.each(newEvents, function(newEvent) {
+
+				$('#'+mapDiv).eom('addToMap', newEvent);
+
+				$('#'+scaleDiv).eom('addToScale', newEvent)
+
+   				eventCount++;
+
+			});
+
+   		},
+
+   		addToMap: function(newEvent){
+
+   			// add a marker in the given location, attach some popup content to it and open the popup
+			L.marker([newEvent.lat, newEvent.lng], { title: newEvent.title }).addTo(L.map(this[0].id)).bindPopup(newEvent.description);
+
+   		},
+
+   		addToScale: function(newEvent) {
+
+   			$('.time-scale').attr('step', eventCount);
+
    		}
+   		
     };
 
     $.fn.eom = function(method) {
