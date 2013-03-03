@@ -6,16 +6,16 @@ define(['jquery','OpenLayers'], function ($) {
     	init: function(options) {
     		var mapDiv = options.mapDiv || 'map';
     		var scaleDiv = options.scaleDiv|| 'scale';
-    		$(this).eom(mapDiv,options.mapOptions||{});
-    		$(this).eom(scaleDiv,options.scaleOptions||{});
+    		$('#' + mapDiv).eom(mapDiv,options.mapOptions||{});
+    		$('#' + scaleDiv).eom(scaleDiv,options.scaleOptions||{});
     		return this;
     	},
     	map: function(options) {
-   			console.log('Creating Map!');
+    		console.log(this);
    			return this;
    		},
    		scale: function(options) {
-   			console.log('Creating Scale!')
+   			console.log(this);
    			return this;
    		}
     };
