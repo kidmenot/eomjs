@@ -1,0 +1,13 @@
+
+
+#map {
+	height: 180px;
+	width: 700px;
+	position: relative;
+}
+
+#scale {
+	height: 50px;
+	width: 700px;
+	position: relative;
+}
