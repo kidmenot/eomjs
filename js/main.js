@@ -1,6 +1,18 @@
 require(['jquery','jquery.eom'], function($) {
 	$(function() {
-		$("#map").eom('map',{});
+		var a = $('#container').eom({
+			eventList: [
+				{
+					title:'test',
+					description: 'blah blah',
+					time: 1989,
+					lat: 51.5,
+					lng: -0.09
+				}
+			]
+		});
+		console.log(a); 
+		/*$("#map").eom('map',{});
 		$("#scale").eom('scale',{});
 		$.eom('add', 'map',[
 			{
@@ -10,6 +22,6 @@ require(['jquery','jquery.eom'], function($) {
 				lng: -0.09,
 				time: 100
 			}
-		]);
+		]);*/
     });
 });

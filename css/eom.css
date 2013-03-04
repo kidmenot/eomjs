@@ -1,0 +1,13 @@
+.eom-map {
+	width:inherit;
+	height: 200px;
+}
+
+.eom-scale {
+	width: inherit;;
+}
+
+.time-scale {
+	height: 50px;
+	width: 700px;
+}

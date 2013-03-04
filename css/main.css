@@ -4,13 +4,8 @@ body {
 	font: 10pt/1.5em Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-#map {
+#container {
 	height: 400px;
-	width: 700px;
-}
-
-#scale {
-	height: 50px;
 	width: 700px;
 }
 
@@ -25,7 +20,3 @@ body {
    	margin:0 auto;
 }
 
-.time-scale {
-	height: 50px;
-	width: 700px;
-}
