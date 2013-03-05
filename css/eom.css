@@ -1,13 +1,26 @@
 .eom-map {
-	width:inherit;
-	height: 200px;
+	width:700px;
+	height: 400px;
 }
 
-.eom-scale {
-	width: inherit;;
-}
-
-.time-scale {
-	height: 50px;
+.eom-timeline {
 	width: 700px;
+	height: 50px;
+}
+
+.eom-timeline-base {
+	width: 100%;
+	padding: 0;
+	display: table;
+	table-layout: fixed;
+}
+
+.eom-timeline-event {
+	display: table-cell;
+	text-align: center;
+	font-size: small;
+}
+
+.active-eom-event{
+	font-size: large;
 }

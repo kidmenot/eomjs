@@ -5,7 +5,10 @@ define(['jquery', 'http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function
     var mapDiv = $(context).find('.eom-map').get(0);
     		
 		// create a map in the "map" div, set the view to a given place and zoom
-		var map = L.map(mapDiv).fitWorld();
+		var map = L.map(mapDiv, {
+      zoom: options.zoom,
+      maxZoom: options.maxZoom
+    });
 
 		// add an OpenStreetMap tile layer
 		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -19,7 +22,7 @@ define(['jquery', 'http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function
 	var addToMap = function(context, newEvent){
     
     // add a marker in the given location, attach some popup content to it and open the popup
-    L.marker([newEvent.lat, newEvent.lng], { title: newEvent.title }).addTo(context.map).bindPopup(newEvent.description);
+    L.marker([newEvent.lat, newEvent.lng], { title: newEvent.title }).addTo(context.map).bindPopup('<h3>' + newEvent.title + '</h3>'+ '<p>' + newEvent.description + '</p>');
 
 	};
 
@@ -37,26 +40,50 @@ define(['jquery', 'http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function
 
 	var timelineSetup = function(context, options){
 
-		var timelineDiv = $(context).find('.eom-timeline').get(0);
+    var timelineDiv = $(context).find('.eom-timeline').get(0);    
 
-		var max = options.max || 1000;
-   	var min = options.min || 0;
-   	var step = options.step || 10;
-
-
-   		$(timelineDiv).append($('<input />',{ class:'time-line', type:"range", min:min, max:max, step: step }));
-
-   		return timelineDiv;
+    var timelineBase = $('<ul />').addClass('eom-timeline-base').appendTo($(timelineDiv));
 
 	};
 
-	var addToTimeline = function(context, options){
-		$('.time-line').attr('step', eventList.length);
+	var addToTimeline = function(context, newEvent){
+		
+    var timelineBase = $($(context).find('.eom-timeline').get(0)).find('.eom-timeline-base').get(0);
+
+    $('<li />', { 
+      id: newEvent.time, 
+      html: '<a>' + newEvent.time + '</a>' ,
+      click: function() {
+        $(context).eom('set', findEventIndex(context, newEvent.time));
+      }
+    }).addClass('eom-timeline-event').appendTo($(timelineBase));
+
 	};
 
   var setTimelineEvent = function(context, eventIndex){
 
+    var timelineBase = $($(context).find('.eom-timeline').get(0)).find('.eom-timeline-base').get(0);
+
+    $(timelineBase).find("li").each(function(){ $(this).removeClass('active-eom-event'); });
+
+    $('#'+context.eventList[eventIndex].time).addClass('active-eom-event');
+
   };
+
+  var findEventIndex = function(context, time) {
+    
+    var eventIndex = -1;
+
+    $.each(context.eventList, function(index){
+      if(this.time.toString() === time.toString()) {
+        eventIndex = index;
+        return false;
+      }
+    });
+
+    return eventIndex;
+
+  }
 
 	/*set of methods available externally*/
     var methods = {
@@ -68,14 +95,11 @@ define(['jquery', 'http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function
     		var settings = {
 
     			mapOptions: {
-
+            maxZoom: 8,
+            zoom: 12
     			},
 
     			timelineOptions: {
-
-    				max:1000,
-    				min:0,
-            step:10
 
     			}
 
@@ -129,6 +153,8 @@ define(['jquery', 'http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function
           $.each(newEvents, function() {
 
             addToMap(context, this);
+
+            addToTimeline(context, this);
 
             context.eventList.push(this);
 
