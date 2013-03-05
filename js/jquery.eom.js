@@ -1,11 +1,11 @@
-define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function ($) {
+define(['jquery', 'http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function ($) {
 
 	var mapSetup = function(context, options){
 
-		var mapDiv = $(context).find('.eom-map').get(0);
+    var mapDiv = $(context).find('.eom-map').get(0);
     		
 		// create a map in the "map" div, set the view to a given place and zoom
-		var map = L.map(mapDiv).setView([51.505, -0.09], 13);
+		var map = L.map(mapDiv).fitWorld();
 
 		// add an OpenStreetMap tile layer
 		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -17,23 +17,31 @@ define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function 
 	};
 
 	var addToMap = function(context, newEvent){
-
-    return context.each(function(){
-      console.log(this);
-      // add a marker in the given location, attach some popup content to it and open the popup
-      L.marker(new L.LatLng(newEvent.lat, newEvent.lng), { title: newEvent.title }).addTo(this.map).bindPopup(newEvent.description);
-
-    });
+    
+    // add a marker in the given location, attach some popup content to it and open the popup
+    L.marker([newEvent.lat, newEvent.lng], { title: newEvent.title }).addTo(context.map).bindPopup(newEvent.description);
 
 	};
+
+  var setMapEvent = function(context, eventIndex){
+
+    var lat = context.eventList[eventIndex].lat;
+
+    var lng = context.eventList[eventIndex].lng;
+
+    context.map.fitBounds([[lat, lng]]);
+
+    context.map.panTo([lat, lng]);
+
+  };
 
 	var timelineSetup = function(context, options){
 
 		var timelineDiv = $(context).find('.eom-timeline').get(0);
 
 		var max = options.max || 1000;
-   		var min = options.min || 0;
-   		var step = options.step || 10;
+   	var min = options.min || 0;
+   	var step = options.step || 10;
 
 
    		$(timelineDiv).append($('<input />',{ class:'time-line', type:"range", min:min, max:max, step: step }));
@@ -46,6 +54,10 @@ define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function 
 		$('.time-line').attr('step', eventList.length);
 	};
 
+  var setTimelineEvent = function(context, eventIndex){
+
+  };
+
 	/*set of methods available externally*/
     var methods = {
 
@@ -54,15 +66,19 @@ define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function 
         var self = this;
 
     		var settings = {
+
     			mapOptions: {
 
     			},
+
     			timelineOptions: {
+
     				max:1000,
     				min:0,
             step:10
-    			},
-    			eventList: []
+
+    			}
+
     		};
 
         return this.each(function() {        
@@ -83,9 +99,7 @@ define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function 
 
       			this['timeline'] = timelineSetup(this, settings.timelineOptions);
 
-            this['eventList']  = settings.eventList;
-
-      			$(this).eom('add', this.eventList);
+            this['eventList'] = [];
 
     		});
 
@@ -93,7 +107,7 @@ define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function 
 
    		add: function(newEvents) {
 
-        var context = this;
+        var self = this;
 
    			if( Object.prototype.toString.call(newEvents) !== '[object Array]' ) {
    				$.error( 'Method add requires an array parameter' );	
@@ -104,17 +118,37 @@ define(['jquery','http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function 
    			}
 
    			/*
-				title, description, time, lat, lng
+        adding the newEvents to the context
+				  newEvent format: title, description, time, lat, lng
    			*/
-   			$.each(newEvents, function() {
+   			
+        return self.each(function(){
 
-          addToMap(context ,this);
-			   
+          var context = this;
+
+          $.each(newEvents, function() {
+
+            addToMap(context, this);
+
+            context.eventList.push(this);
+
+          });
+
         });
 
-			
+   		},
 
-   		}
+      set: function(eventIndex){
+
+        return this.each(function(){
+
+          setMapEvent(this, eventIndex);
+
+          setTimelineEvent(this, eventIndex);
+
+        });
+
+      }
 
     };
 
