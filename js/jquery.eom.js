@@ -1,4 +1,4 @@
-define(['jquery', 'http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js'], function ($) {
+define(['jquery', 'leaflet'], function ($) {
 
 	var mapSetup = function(context, options){
 
